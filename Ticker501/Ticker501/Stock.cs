@@ -13,8 +13,8 @@ namespace Ticker501
         private string _name; // full name 
         private double _price; // price 
         private int _quantity; // 
-        public static Dictionary<string, KeyValuePair<string, double>> initialstock;
-        public static Dictionary<string, KeyValuePair<string, double>> updatedstock;
+        public static Dictionary<string, KeyValuePair<string, double>> _initialstock;
+        public static Dictionary<string, KeyValuePair<string, double>> _updatedstock;
 
         public Stock(string tickername, string fullname, double price, int quantity)
         {
@@ -67,7 +67,7 @@ namespace Ticker501
         public static void ReadFile()
         {
             string filename = "Ticker.txt";
-            initialstock = new Dictionary<string, KeyValuePair<string, double>>();
+            _initialstock = new Dictionary<string, KeyValuePair<string, double>>();
             using (StreamReader file = new StreamReader(filename))
             {
                 while (!file.EndOfStream)
@@ -75,12 +75,12 @@ namespace Ticker501
                     string[] line = file.ReadLine().Split('-');
                     if(line.Length == 3)
                     {
-                        initialstock.Add(line[0].ToString(), new KeyValuePair<string, double>(line[1].ToString(), Convert.ToDouble(line[2].Substring(1))));
+                        _initialstock.Add(line[0].ToString(), new KeyValuePair<string, double>(line[1].ToString(), Convert.ToDouble(line[2].Substring(1))));
                     }
                    
                 }
             }
-            updatedstock = initialstock;
+            _updatedstock = _initialstock;
         }
        
     }

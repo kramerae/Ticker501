@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* Program.cs
+ * Abbey Kramer: Ticker501
+ */
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +12,8 @@ namespace Ticker501
 {
     class Program
     {
+        public static Account _account; 
+
         static void Main(string[] args)
         {
 
@@ -16,9 +21,12 @@ namespace Ticker501
 
             // Read in file
             Stock.ReadFile();
-            Account account = new Account();
+            // Create a new account
+            _account = new Account();
             
-            int menu = 1; // menu value (1 = account; 2 = portfolio; exit = 0)
+            // Go through menu options
+            // 1 = account menu, 2 = portfolio menu, 0 = exit
+            int menu = 1;
             do
             {
                 if(menu == 1)
@@ -30,25 +38,9 @@ namespace Ticker501
                     menu = PortfolioMenu();
                 }
             } while (menu != 0);
-            /*
-            // Main option menu 
-            char option; // variable to hold main menu selection
-            bool valid = false;
-            Console.WriteLine("Please select an option: \n  (D) Deposit funds to account \n  (W) Withdrawal funds from account\n  (A) Account Balance\n  (P) Portfolio Balance\n  (B) Buy Stock\n  (S) Sell Stock\n  (C) Create Porfolio\n  (X) Delete Portfolio");
-            string s = Console.ReadLine();
-            valid = switchstatement(s[0]);
 
-            while (valid == false)
-            {
-                Console.WriteLine("Invalid Option. Please try again");
-                Console.WriteLine("Please select an option: \n  (D) Deposit funds to account \n  (W) Withdrawal funds from account\n  (A) Account Balance\n  (P) Portfolio Balance\n  (B) Buy Stock\n  (S) Sell Stock\n  (C) Create Porfolio\n  (X) Delete Portfolio");
-                s = Console.ReadLine();
-                option = s[0];
-                valid = switchstatement(s[0]);
-            }
-            */
-
-
+            // Exit 
+            System.Environment.Exit(0);
 
         }
         
@@ -65,12 +57,12 @@ namespace Ticker501
                 Console.WriteLine("(C) Cash Balance");
                 Console.WriteLine("(P) Positions Balance");
                 Console.WriteLine("(R) Gains/Loss Report");
-                Console.WriteLine("(N) Create new Portfolio");
-                Console.WriteLine("(X) Delete Portfolio");
-                Console.WriteLine("(B) Buy Stock");
-                Console.WriteLine("(S) Sell Stock");
-                Console.WriteLine("(M) View Portfolio Menu");
-                Console.WriteLine("(U) Update Stock Prices using simulator");
+                Console.WriteLine("(N) Create new portfolio");
+                Console.WriteLine("(X) Delete portfolio");
+                Console.WriteLine("(B) Buy stock");
+                Console.WriteLine("(S) Sell stock");
+                Console.WriteLine("(M) View portfolio menu");
+                Console.WriteLine("(U) Update stock prices using simulator");
                 Console.WriteLine("(E) Exit");
                 string s = Console.ReadLine();
                 menu = AccountSwitch(s[0]);
@@ -107,20 +99,29 @@ namespace Ticker501
                 case ('D'):
                 case ('d'):
                     {
-                        throw new NotImplementedException();
+                        Console.WriteLine("Deposit funds to account:");
+                        Console.Write("Enter deposit amount: ");
+                        double d = Convert.ToDouble(Console.ReadLine());
+                        double funds = _account.DepositFunds(d);
+                        Console.WriteLine("Account Fund Balance = $" + funds.ToString("n2"));
                         return 1;
                     }
                 // Withdrawal funds from account
                 case ('W'):
                 case ('w'):
                     {
-                        throw new NotImplementedException();
+                        Console.WriteLine("Withdrawal funds from account:");
+                        Console.Write("Enter withdrawal amount: ");
+                        double w = Convert.ToDouble(Console.ReadLine());
+                        double funds = _account.WithdrawalFunds(w);
+                        Console.WriteLine("Account Fund Balance = $" + funds.ToString("n2"));
                         return 1;
                     }
                 // Get account balance
                 case ('A'):
                 case ('a'):
                     {
+                        Console.WriteLine("Get account balance:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -128,6 +129,7 @@ namespace Ticker501
                 case ('C'):
                 case ('c'):
                     {
+                        Console.WriteLine("Get cash balance:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -135,6 +137,7 @@ namespace Ticker501
                 case ('P'):
                 case ('p'):
                     {
+                        Console.WriteLine("Get positions balance:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -142,6 +145,7 @@ namespace Ticker501
                 case ('R'):
                 case ('r'):
                     {
+                        Console.WriteLine("Get gains/loss report:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -149,6 +153,7 @@ namespace Ticker501
                 case ('B'):
                 case ('b'):
                     {
+                        Console.WriteLine("Buy stock:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -156,6 +161,7 @@ namespace Ticker501
                 case ('S'):
                 case ('s'):
                     {
+                        Console.WriteLine("Sell stock:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -163,13 +169,15 @@ namespace Ticker501
                 case ('N'):
                 case ('n'):
                     {
-                        throw new NotImplementedException();
+                        Console.WriteLine("Create a new portfolio:");
+                        _account.CreatePortfolio();
                         return 1;
                     }
                 // Delete Portfolio
                 case ('X'):
                 case ('x'):
                     {
+                        Console.WriteLine("Delete a portfolio:");
                         throw new NotImplementedException();
                         return 1;
                     }
@@ -183,8 +191,14 @@ namespace Ticker501
                 case ('U'):
                 case ('u'):
                     {
+                        Console.WriteLine("Update stock prices:");
                         throw new NotImplementedException();
                         return 1;
+                    }
+                case ('E'):
+                case ('e'):
+                    {
+                        return 0;
                     }
                 default:
                     {
@@ -202,6 +216,7 @@ namespace Ticker501
                 case ('C'):
                 case ('c'):
                     {
+                        Console.WriteLine("Get cash balance:");
                         throw new NotImplementedException();
                         return 2;
                     }
@@ -209,6 +224,7 @@ namespace Ticker501
                 case ('P'):
                 case ('p'):
                     {
+                        Console.WriteLine("Get positions balance:");
                         throw new NotImplementedException();
                         return 2;
                     }
@@ -216,6 +232,7 @@ namespace Ticker501
                 case ('R'):
                 case ('r'):
                     {
+                        Console.WriteLine("Get gains/loss report:");
                         throw new NotImplementedException();
                         return 2;
                     }
@@ -223,6 +240,7 @@ namespace Ticker501
                 case ('B'):
                 case ('b'):
                     {
+                        Console.WriteLine("Buy stock:");
                         throw new NotImplementedException();
                         return 2;
                     }
@@ -230,6 +248,7 @@ namespace Ticker501
                 case ('S'):
                 case ('s'):
                     {
+                        Console.WriteLine("Sell stock:");
                         throw new NotImplementedException();
                         return 2;
                     }
@@ -237,7 +256,6 @@ namespace Ticker501
                 case ('M'):
                 case ('m'):
                     {
-                        throw new NotImplementedException();
                         return 1;
                     }
                 default:

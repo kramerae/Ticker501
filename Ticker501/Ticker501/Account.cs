@@ -11,6 +11,8 @@ namespace Ticker501
 {
     public class Account
     {
+        public const double FFPTrade = 9.99;
+        public const double FFPTransfer = 4.99;
         private List<Portfolio> _portfolios; // the portfolios in an account
         private int _portfolioCount = 0; // number of portfolios
         private double _funds; // funds in account
@@ -47,12 +49,19 @@ namespace Ticker501
         public double DepositFunds(double add)
         {
             _funds += add;
+            _funds -= FFPTransfer;
             return _funds;
         }
 
         public double WithdrawalFunds(double w)
         {
-            throw new NotImplementedException();
+          
+            if(w <= _funds-FFPTransfer)
+            {
+                _funds -= w;
+                _funds -= FFPTransfer;
+            }
+            return _funds;
         }
 
         public void CreatePortfolio()

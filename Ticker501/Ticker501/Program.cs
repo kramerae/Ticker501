@@ -154,6 +154,7 @@ namespace Ticker501
                 case ('b'):
                     {
                         Console.WriteLine("Buy stock:");
+                        
                         throw new NotImplementedException();
                         return 1;
                     }

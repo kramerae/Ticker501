@@ -83,5 +83,17 @@ namespace Ticker501
             _updatedstock = _initialstock;
         }
        
+        public static void DisplayTicker()
+        {
+            Console.WriteLine("Current Ticker Values");
+            foreach(var item in _updatedstock)
+            {
+                string ticker = item.Key;
+                KeyValuePair<string, double> pair = item.Value;
+                Console.WriteLine(ticker + "-" + pair.Key + "-" + pair.Value);
+            }
+
+            Console.WriteLine("");
+        }
     }
 }

@@ -186,13 +186,48 @@ namespace Ticker501
         /// <returns>The new funds available amount</returns>
         public double WithdrawalFunds(double w)
         {
-            
+            // check to see if enough cash for withdraw
             if(w <= _funds-FFPTransfer)
             {
                 // Deduct withdrawal from funds
                 _funds -= w;
                 // Deduct fee 
                 _funds -= FFPTransfer;
+                Console.WriteLine("Successfully withdrawal $" + w.ToString("n2"));
+            }
+            else
+            {
+                // check to see if current value and cash is enough for withdraw
+                if(w <= CurrentValue() +( _funds - FFPTransfer))
+                {
+                    while(w > (_funds - FFPTransfer))
+                    {
+                        // Prompt user they must sell stocks to make withdraw
+                        Console.WriteLine("You must sell positions in order to fulfill the withdrawl.");
+                        Console.Write("Do you want to sell stock? (y/n) ");
+                        string input = Console.ReadLine();
+                        if (input[0] == 'y' || input[0] == 'Y')
+                        {
+                            SellStock();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Cannot make the withdrawl. Insufficient funds");
+                            return _funds;
+                        }
+                    }
+                    _funds -= w;
+                    _funds -= FFPTransfer;
+                    Console.WriteLine("Successfully withdrawal $" + w.ToString("n2"));
+
+                }
+                // not possible to make withdraw
+                else
+                {
+                    Console.WriteLine("Cannot make the withdrawl. Insufficient funds");
+                    return _funds;
+                }
+               
             }
             // Return new funds avaiable after withdrawal
             return _funds;

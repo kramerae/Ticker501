@@ -9,20 +9,31 @@ namespace Ticker501
 {
     public class Stock
     {
-        private string _tickerName; // ab. name
+        private string _tickerName; // ticker name
         private string _name; // full name 
-        private double _price; // price 
-        private int _quantity; // 
-        public static Dictionary<string, KeyValuePair<string, double>> _initialstock;
-        public static Dictionary<string, KeyValuePair<string, double>> _updatedstock;
+        private double _price; // current price 
+        private int _quantity; // quantity to be purchased
+        private double _purchasevalue; // purchase price
 
-        public Stock(string tickername, string fullname, double price, int quantity)
+        // Stock isntance for reading in stock files
+        public Stock(string tickername, string fullname, double purchasevalue)
+        {
+            _tickerName = tickername;
+            _name = fullname;
+            _purchasevalue = purchasevalue;
+        }
+
+        // Stock instance for when buying stock
+        public Stock(string tickername, string fullname, double purchasevalue, double price, int quantity)
         {
             _tickerName = tickername;
             _name = fullname;
             _price = price;
             _quantity = quantity;
+            _purchasevalue = purchasevalue;
         }
+
+
 
         public string GetTickerName
         {
@@ -56,6 +67,18 @@ namespace Ticker501
             }
         }
      
+        public double GetPurchaseValue
+        {
+            get
+            {
+                return _purchasevalue;
+            }
+        }
+        
+        public void DisplayStock()
+        {
+            Console.WriteLine(_tickerName + "-" + _name + "-$" + _purchasevalue);    
+        }
         /*
         public double Add(int count)
         {
@@ -64,36 +87,6 @@ namespace Ticker501
         }
         */
 
-        public static void ReadFile()
-        {
-            string filename = "Ticker.txt";
-            _initialstock = new Dictionary<string, KeyValuePair<string, double>>();
-            using (StreamReader file = new StreamReader(filename))
-            {
-                while (!file.EndOfStream)
-                {
-                    string[] line = file.ReadLine().Split('-');
-                    if(line.Length == 3)
-                    {
-                        _initialstock.Add(line[0].ToString(), new KeyValuePair<string, double>(line[1].ToString(), Convert.ToDouble(line[2].Substring(1))));
-                    }
-                   
-                }
-            }
-            _updatedstock = _initialstock;
-        }
-       
-        public static void DisplayTicker()
-        {
-            Console.WriteLine("Current Ticker Values");
-            foreach(var item in _updatedstock)
-            {
-                string ticker = item.Key;
-                KeyValuePair<string, double> pair = item.Value;
-                Console.WriteLine(ticker + "-" + pair.Key + "-" + pair.Value);
-            }
-
-            Console.WriteLine("");
-        }
+ 
     }
 }

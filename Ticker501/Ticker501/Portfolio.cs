@@ -11,15 +11,15 @@ namespace Ticker501
 {
     public class Portfolio
     {
+        public const double FFPTrade = 9.99;
+        public const double FFPTransfer = 4.99;
         private string _name;
-        private int _identifier;
-        private List<Stock> _stocks; // the stocks in a portfolio
+        private Dictionary<string, Stock> _stocks; // the stocks in a portfolio
 
-        public Portfolio(string name, int identifier)
+        public Portfolio(string name)
         {
             _name = name;
-            _identifier = identifier;
-            _stocks = new List<Stock>();
+            _stocks = new Dictionary<string, Stock>();
         }
 
         public string GetName
@@ -30,15 +30,8 @@ namespace Ticker501
             }
         }
 
-        public int GetIdentifier
-        {
-            get
-            {
-                return _identifier;
-            }
-        }
 
-        public List<Stock> GetStocks
+        public Dictionary<string, Stock> GetStocks
         {
             get
             {
@@ -46,21 +39,74 @@ namespace Ticker501
             }
         }
        
-        public double BuyStock()
+        public double BuyStock(double funds)
         {
-            int style = 0; // 1 = enter # of stocks; 2 = enter amount in $$
-            Console.Write("Enter (1) to buy by entering number of stocks or (2) to buy by amount in dollars: ");
-            style = Convert.ToInt32(Console.ReadLine());
-
             // Display current stock values
-            Stock.DisplayTicker();
+            Database.DisplayTicker();
 
-            Console.WriteLine("Enter 4 letter ticker abbreviation for stock you wish to buy:");
+            // Get ticker name
+            Console.WriteLine("Enter ticker name for stock you wish to buy:");
             string tickername = Console.ReadLine();
+
+            double cost = 0;
+            Stock value;
+            if(Database._stockdatabase.TryGetValue(tickername, out value))
+            {
+                Console.WriteLine("Purchasing: " + value.GetTickerName + "-" + value.GetName + "-" + value.GetPurchaseValue);
+
+                int style = 0; // 1 = enter # of stocks; 2 = enter amount in $$
+                Console.WriteLine("\t(1) to buy by entering number of stocks\n\t(2) to buy by amount in dollars");
+                style = Convert.ToInt32(Console.ReadLine());
+                
+                int quantity = 0;
+                // buy by entering number of stocks
+                if(style == 1)
+                {
+                    Console.Write("Enter the number of " + value.GetTickerName + " stocks you want to buy: ");
+                    quantity = Convert.ToInt32(Console.ReadLine());
+                    cost = value.GetPurchaseValue * quantity;
+                    cost += FFPTrade;
+                    if (cost > funds)
+                    {
+                        Console.WriteLine("You don't have that much money!");
+                        Console.WriteLine("Exiting buy stock...");
+                        return 0;
+                    }
+
+                    Stock nwstk = new Stock(value.GetTickerName, value.GetName, value.GetPurchaseValue, value.GetPurchaseValue, quantity);
+                    _stocks.Add(value.GetTickerName, nwstk);
+
+                }
+                // buy by entering amount
+                else if(style == 2)
+                {
+                    Console.Write("Enter the amount in dollars of " + value.GetTickerName + " stock you want to buy: ");
+                    double amount = Convert.ToInt32(Console.ReadLine());
+                    quantity = Convert.ToInt32(amount / value.GetPurchaseValue);
+                    cost = value.GetPurchaseValue * quantity;
+                    cost += FFPTrade;
+                    if (cost > funds)
+                    {
+                        Console.WriteLine("You don't have that much money!");
+                        Console.WriteLine("Exiting buy stock...");
+                        return 0;
+                    }
+
+                    Stock nwstk = new Stock(value.GetTickerName, value.GetName, value.GetPurchaseValue, value.GetPurchaseValue, quantity);
+                    _stocks.Add(value.GetTickerName, nwstk);
+
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ticker option.");
+            }
+
+            return cost; 
             
-            
-            // Check to see if stock is already in portfolio
-            foreach(Stock s in _stocks)
+            /*
+            // ********* Check to see if stock is already in portfolio
+            foreach (Stock s in _stocks)
             {
                 if(s.GetTickerName == tickername.ToUpper())
                 {
@@ -68,34 +114,30 @@ namespace Ticker501
                     throw new NotImplementedException();
                 }
             }
-
-            KeyValuePair<string, double> pair; 
-            // Checks to see if tickername is a valid option
-            if (Stock._updatedstock.TryGetValue(tickername.ToUpper(), out pair))
-            {
-                if(style == 1)
-                {
-                    Console.Write("Enter the number of " + tickername.ToUpper() + " stocks you want to buy: ");
-                    int quanitity = Convert.ToInt32(Console.ReadLine());
-                    Stock nwstck = new Stock(tickername.ToUpper(), pair.Key, pair.Value, quanitity);
-                    // Add to portfolio
-                    // Change money + fee
-                    throw new NotImplementedException();
-                }  
-                else if(style == 2)
-                {
-                    Console.Write("Enter the amount in dollars of " + tickername.ToUpper() + " stock you want to buy: ");
-                    int amount = Convert.ToInt32(Console.ReadLine());
-                    throw new NotImplementedException();
-                } 
-            }
-
+            
             throw new NotImplementedException();
+            */
         }
         
         public double SellStock(string tickername)
         {
             throw new NotImplementedException();
+        }
+
+        public double PositionsBalance()
+        {
+            throw new NotImplementedException();
+            double total = 0;
+            foreach(Stock s in _stocks.Values)
+            {
+                int q = s.GetQuantity;
+                double p = s.GetPrice;
+                total += (p * q);
+            }
+            foreach(Stock x in _stocks.Values)
+            {
+                Console.WriteLine("\t" + x.GetTickerName + " = ");
+            }
         }
     }
 }

@@ -15,7 +15,13 @@ namespace Ticker501
         private int _quantity; // quantity to be purchased
         private double _purchasevalue; // purchase price
 
-        // Stock instance for reading in stock files
+        /// <summary>
+        /// Stock instance for reading in stock from file
+        /// </summary>
+        /// <param name="tickername">ticker name stock</param>
+        /// <param name="fullname">full name of stock</param>
+        /// <param name="purchasevalue">purchase value of stock</param>
+        /// <param name="price">also the purchase value</param>
         public Stock(string tickername, string fullname, double purchasevalue, double price)
         {
             _tickerName = tickername;
@@ -24,7 +30,14 @@ namespace Ticker501
             _price = price;
         }
 
-        // Stock instance for when buying stock
+        /// <summary>
+        /// Stock instance when buying/selling stock 
+        /// </summary>
+        /// <param name="tickername">tickername</param>
+        /// <param name="fullname">full name</param>
+        /// <param name="purchasevalue">value from file</param>
+        /// <param name="price">current price (updated by simulator)</param>
+        /// <param name="quantity">number of stocks bought</param>
         public Stock(string tickername, string fullname, double purchasevalue, double price, int quantity)
         {
             _tickerName = tickername;
@@ -34,8 +47,9 @@ namespace Ticker501
             _purchasevalue = purchasevalue;
         }
 
-
-
+        /// <summary>
+        /// Gets the ticker name stock
+        /// </summary>
         public string GetTickerName
         {
             get
@@ -44,6 +58,9 @@ namespace Ticker501
             }
         }
 
+        /// <summary>
+        /// Gets the full name of stock
+        /// </summary>
         public string GetName
         {
             get
@@ -52,6 +69,9 @@ namespace Ticker501
             }
         }
 
+        /// <summary>
+        /// Gets the current price of stock
+        /// </summary>
         public double GetPrice
         {
             get
@@ -60,6 +80,9 @@ namespace Ticker501
             }
         }
 
+        /// <summary>
+        /// Gets the quantity of stock
+        /// </summary>
         public int GetQuantity
         {
             get
@@ -68,6 +91,9 @@ namespace Ticker501
             }
         }
      
+        /// <summary>
+        /// Gets the purchase price for stock
+        /// </summary>
         public double GetPurchaseValue
         {
             get
@@ -76,23 +102,22 @@ namespace Ticker501
             }
         }
         
+        /// <summary>
+        /// Displays all of the stock information in one formatted line
+        /// </summary>
         public void DisplayStock()
         {
             Console.WriteLine(_tickerName + "-" + _name + "-$" + _price.ToString("n2"));    
         }
 
+        /// <summary>
+        /// Updates the current stock price 
+        /// </summary>
+        /// <param name="price">new price given from simulator</param>
         public void UpdateStock(double price)
         {
             _price = price; 
         }
-        /*
-        public double Add(int count)
-        {
-            double 
-            return 
-        }
-        */
-
  
     }
 }

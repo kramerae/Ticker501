@@ -9,8 +9,14 @@ using System.Threading.Tasks;
 
 namespace Ticker501
 {
+    /// <summary>
+    /// Simulator to update current values of stock
+    /// </summary>
     public class Simulator
     {
+        /// <summary>
+        /// Runs simulator based on market volatility from user
+        /// </summary>
         public static void StartSimulator()
         {
             Console.WriteLine("Enter Market Volatility:");
@@ -33,15 +39,17 @@ namespace Ticker501
             UpdatePrices(selection);
         }
 
-
-
+        /// <summary>
+        /// Randomly generates numbers based on volatility
+        /// </summary>
+        /// <param name="selection">market volatility</param>
         public static void UpdatePrices(int selection)
         {
             Random rnd = new Random();
             int randomnumber;
             int r;
 
-
+            // High-volatility 
             if (selection == 1)
             {
                 randomnumber = rnd.Next(3, 16);
@@ -49,6 +57,7 @@ namespace Ticker501
                 SimulateForeach(randomnumber, r);
 
             }
+            // Medium-volatility
             else if (selection == 2)
             {
                 randomnumber = rnd.Next(2, 9);
@@ -56,6 +65,7 @@ namespace Ticker501
                 SimulateForeach(randomnumber, r);
 
             }
+            // Low-volatility
             else if (selection == 3)
             {
                 randomnumber = rnd.Next(1, 5);
@@ -65,13 +75,18 @@ namespace Ticker501
 
         }
 
+        /// <summary>
+        /// Updates each stock price in database and in account
+        /// </summary>
+        /// <param name="randomnumber">random number for change based on volatility</param>
+        /// <param name="r">random number for +/- change</param>
         public static void SimulateForeach(int randomnumber, int r)
         {
             int sign;
             double price;
             double change;
             double multiplier;
-
+            // Calculate multiplier value 
             multiplier = ((double)randomnumber / (double)100);
             if (r == 1)
             {
@@ -81,6 +96,7 @@ namespace Ticker501
             {
                 sign = -1;
             }
+            // Loop through and update each stock in database
             foreach (Stock s in Database._stockdatabase.Values)
             {
                 price = s.GetPurchaseValue;
@@ -94,6 +110,7 @@ namespace Ticker501
                     s.UpdateStock(price - change);
                 }
             }
+            // Loop through and update each stock in account
             foreach (Portfolio p in Program._account.GetPortfolio.Values)
             {
                 foreach (Stock s in p.GetStocks.Values)

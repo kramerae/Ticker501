@@ -8,12 +8,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Ticker501
 {
+    /// <summary>
+    /// Main class that displays menu at the account and portfolio level
+    /// </summary>
     class Program
-    {
-        public static Account _account; 
+    { 
+        public static Account _account; // holds an account
 
+        /// <summary>
+        /// Main Method
+        /// Reads in the file & creates a instance of an account
+        /// Displays Either Account or Portfolio menu until user exits
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
 
@@ -31,19 +41,25 @@ namespace Ticker501
             {
                 if(menu == 1)
                 {
+                    // Calls account menu
                     menu = AccountMenu();
                 }
                 else if(menu == 2)
                 {
+                    // Calls portfolio menu
                     menu = PortfolioMenu();
                 }
             } while (menu != 0);
 
-            // Exit 
+            // Exit when menu variable becomes 0 
             System.Environment.Exit(0);
 
         }
         
+        /// <summary>
+        /// Displays the account menu options 
+        /// </summary>
+        /// <returns>menu level (0/1/2)</returns>
         private static int AccountMenu()
         {
             int menu = 1; 
@@ -65,15 +81,21 @@ namespace Ticker501
                 Console.WriteLine("(U) Update stock prices using simulator");
                 Console.WriteLine("(E) Exit");
                 string s = Console.ReadLine();
+                // Calls switch based on option input
                 menu = AccountSwitch(s[0]);
             }
 
             return menu;
         }
 
+        /// <summary>
+        /// Displays the Portfolio Menu Option
+        /// </summary>
+        /// <returns>menu level (0/1/2)</returns>
         private static int PortfolioMenu()
         {
             int menu = 2;
+            // Gets portfolio object
             Portfolio p = _account.SelectPortfolio();
             while(menu == 2)
             {
@@ -86,14 +108,22 @@ namespace Ticker501
                 Console.WriteLine("(R) Gains/Loss Report");
                 Console.WriteLine("(M) Return to Account Menu");
                 string s = Console.ReadLine();
+                // Calls portfolio switch based on option input
                 menu = PortfolioSwitch(s[0], p);
             }
 
             return menu;
         }
-
+        
+        /// <summary>
+        /// Switch statement for all the account menu input options
+        /// Account actions are completed depending on char input
+        /// </summary>
+        /// <param name="option">single character inputed from account menu</param>
+        /// <returns>menu level (0/1/2)</returns>
         private static int AccountSwitch(char option)
         {
+            // Switch statement 
             switch (option)
             {
                 // Deposit funds to account
@@ -169,7 +199,6 @@ namespace Ticker501
                     {
                         Console.WriteLine("\nSell stock:");
                         _account.SellStock();
-                        //throw new NotImplementedException();
                         return 1;
                     }
                 // Create Portfolio
@@ -192,6 +221,7 @@ namespace Ticker501
                 case ('M'):
                 case ('m'):
                     {
+                        // check to see if they have a portfolio to view its menu
                         if(_account.GetPortfolioCount == 0)
                         {
                             Console.WriteLine("You do not have any portfolios to view.");
@@ -211,11 +241,13 @@ namespace Ticker501
                         Console.WriteLine("Successfully updated stock prices.");
                         return 1;
                     }
+                // Exit
                 case ('E'):
                 case ('e'):
                     {
                         return 0;
                     }
+                // Any other letter is invalid 
                 default:
                     {
                         Console.WriteLine("Invalid Option.");
@@ -224,6 +256,12 @@ namespace Ticker501
             }
         }
 
+        /// <summary>
+        /// Switch statement for all the portfolio menu input options
+        /// </summary>
+        /// <param name="option">single character inputed from portfolio menu</param>
+        /// <param name="p">The Portfolio object that the menu is for</param>
+        /// <returns>menu level (0/1/2)</returns>
         private static int PortfolioSwitch(char option, Portfolio p)
         {
             switch (option)

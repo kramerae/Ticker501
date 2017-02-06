@@ -74,18 +74,19 @@ namespace Ticker501
         private static int PortfolioMenu()
         {
             int menu = 2;
+            Portfolio p = _account.SelectPortfolio();
             while(menu == 2)
             {
-                Console.WriteLine("\nPortfolio Menu");
+                Console.WriteLine("\nPortfolio Menu for portfolio " + p.GetName);
                 Console.WriteLine("Please select an option:");
-                Console.WriteLine("(C) Cash Balance");
+                Console.WriteLine("(A) Portfolio Balance");
                 Console.WriteLine("(P) Positions Balance");
                 Console.WriteLine("(B) Buy Stock");
                 Console.WriteLine("(S) Sell Stock");
                 Console.WriteLine("(R) Gains/Loss Report");
                 Console.WriteLine("(M) Return to Account Menu");
                 string s = Console.ReadLine();
-                menu = PortfolioSwitch(s[0]);
+                menu = PortfolioSwitch(s[0], p);
             }
 
             return menu;
@@ -122,7 +123,12 @@ namespace Ticker501
                 case ('a'):
                     {
                         Console.WriteLine("\nGet account balance:");
-                        Console.WriteLine("Account Balance (cash available + current value of stocks) = $" + _account.CurrentValue().ToString("n2"));
+                        double value = _account.CurrentValue();
+                        double cash = _account.GetFunds;
+                        double balance = value + cash; 
+                        Console.WriteLine("Account Balance (cash available + current value of stocks) = $" + balance.ToString("n2"));
+                        Console.WriteLine("\tCash available to invest: $" + cash.ToString("n2"));
+                        Console.WriteLine("\tValue of stocks: $" + value.ToString("n2"));
                         return 1;
                     }
                 // Get cash balance
@@ -130,7 +136,7 @@ namespace Ticker501
                 case ('c'):
                     {
                         Console.WriteLine("\nGet cash balance:");
-                        Console.WriteLine("Cash Balance = $" + _account.GetFunds.ToString("n2"));
+                        Console.WriteLine("Cash Balance (value of stocks you own) = $" + _account.CurrentValue().ToString("n2"));
                         return 1;
                     }
                 // Get positions balance
@@ -162,7 +168,8 @@ namespace Ticker501
                 case ('s'):
                     {
                         Console.WriteLine("\nSell stock:");
-                        throw new NotImplementedException();
+                        _account.SellStock();
+                        //throw new NotImplementedException();
                         return 1;
                     }
                 // Create Portfolio
@@ -178,21 +185,30 @@ namespace Ticker501
                 case ('x'):
                     {
                         Console.WriteLine("\nDelete a portfolio:");
-                        throw new NotImplementedException();
+                        _account.DeletePortfolio();
                         return 1;
                     }
                 // Go to Portfolio Menu
                 case ('M'):
                 case ('m'):
                     {
-                        return 2;
+                        if(_account.GetPortfolioCount == 0)
+                        {
+                            Console.WriteLine("You do not have any portfolios to view.");
+                            return 1;
+                        }
+                        else
+                        {
+                            return 2;
+                        }
                     }
                 // Update stock prices with simulator
                 case ('U'):
                 case ('u'):
                     {
                         Console.WriteLine("\nLauching simulator:");
-                        throw new NotImplementedException();
+                        Database.StartSimulator();
+                        //throw new NotImplementedException();
                         return 1;
                     }
                 case ('E'):
@@ -208,16 +224,17 @@ namespace Ticker501
             }
         }
 
-        private static int PortfolioSwitch(char option)
+        private static int PortfolioSwitch(char option, Portfolio p)
         {
             switch (option)
             {
-                // Get cash balance
-                case ('C'):
-                case ('c'):
+                // Get portfolio balance
+                case ('A'):
+                case ('a'):
                     {
-                        Console.WriteLine("\nGet cash balance:");
-                        throw new NotImplementedException();
+                        Console.WriteLine("\nGet portfolio balance:");
+                        int q = _account.Quantity();
+                        p.PortfolioBalance(q);
                         return 2;
                     }
                 // Get Positions Balance
@@ -225,7 +242,7 @@ namespace Ticker501
                 case ('p'):
                     {
                         Console.WriteLine("\nGet positions balance:");
-                        throw new NotImplementedException();
+                        p.PositionsBalance();
                         return 2;
                     }
                 // Get gains/loss report
@@ -241,7 +258,7 @@ namespace Ticker501
                 case ('b'):
                     {
                         Console.WriteLine("\nBuy stock:");
-                        throw new NotImplementedException();
+                        p.BuyStock(_account.GetFunds);
                         return 2;
                     }
                 // Sell Stock
@@ -249,7 +266,8 @@ namespace Ticker501
                 case ('s'):
                     {
                         Console.WriteLine("\nSell stock:");
-                        throw new NotImplementedException();
+                        p.SellStock();
+                        //throw new NotImplementedException();
                         return 2;
                     }
                 // Return to account menu 

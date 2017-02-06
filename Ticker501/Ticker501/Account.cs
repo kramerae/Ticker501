@@ -72,6 +72,31 @@ namespace Ticker501
             }
         }
 
+        public void SellStock()
+        {
+            double soldtotal = 0;
+            if (_portfolioCount == 0)
+            {
+                Console.Write("You have no stock to sell.");
+                return;
+            }
+
+            if (_portfolioCount > 0)
+            {
+                Portfolio p = SelectPortfolio();
+                soldtotal = p.SellStock();
+                if (soldtotal != 0)
+                {
+                    _funds += soldtotal;
+                    Console.WriteLine("Successfully sold stock.");
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
         public Portfolio SelectPortfolio()
         {
             Console.WriteLine("Choose a portfolio: ");
@@ -127,6 +152,37 @@ namespace Ticker501
             }
         }
 
+        public void DeletePortfolio()
+        {
+            if(_portfolioCount > 0)
+            {
+                Console.WriteLine("Choose a portfolio to delete: ");
+                foreach (string x in _portfolios.Keys)
+                {
+                    Console.WriteLine(x);
+                }
+                string input = Console.ReadLine();
+                Portfolio value;
+                while (!(_portfolios.TryGetValue(input, out value)))
+                {
+                    Console.WriteLine("Invalid option try again.");
+                    Console.WriteLine("Choose a portfolio: ");
+                    input = Console.ReadLine();
+                }
+
+                double amount = value.CurrentValue();
+                _portfolios.Remove(input);
+                _funds += amount;
+                _portfolioCount--;
+                Console.WriteLine("Portfolio deleted.");
+            }
+            else
+            {
+                Console.WriteLine("You do not have any portfolios within your account.");
+            }
+            
+        }
+
         public double CurrentValue()
         {
             double total = 0;
@@ -143,17 +199,37 @@ namespace Ticker501
         public void PositionsBalance()
         {
             double total = CurrentValue();
-            Console.WriteLine("Value of all stocks in account: $" + total.ToString("n2"));
+            int quantity = Quantity();
+            Console.WriteLine("Current value of all stocks in account: $" + total.ToString("n2"));
             Console.WriteLine("Breakdown by stock:");
             foreach (Portfolio p in _portfolios.Values)
             {
                 foreach (Stock s in p.GetStocks.Values)
                 {
                     double t = s.GetQuantity * s.GetPrice;
-                    int percent = Convert.ToInt32((t / total) * 100);
-                    Console.WriteLine("\t" + s.GetTickerName + " = $" + t.ToString("n2") + " = " + percent + "%");
+                    double percent = ((double)s.GetQuantity / (double)quantity) * 100;
+                    Console.WriteLine("\t" + s.GetTickerName + " - " + s.GetName + "(" + percent.ToString("n2") + "%)" + " = $" + t.ToString("n2"));
                 }
             }
+            
         }
+
+        public int Quantity()
+        {
+            int total = 0;
+            foreach (Portfolio p in _portfolios.Values)
+            {
+                foreach (Stock s in p.GetStocks.Values)
+                {
+                    total += s.GetQuantity;
+                }
+            }
+            return total;
+
+
+        }
+
+       
+
     }
 }

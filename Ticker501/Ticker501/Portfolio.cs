@@ -45,8 +45,8 @@ namespace Ticker501
             Database.DisplayTicker();
 
             // Get ticker name
-            Console.WriteLine("Enter ticker name for stock you wish to buy:");
-            string tickername = Console.ReadLine();
+            Console.WriteLine("Enter ticker name for stock you wish to buy: ");
+            string tickername = Console.ReadLine().ToUpper();
 
             double cost = 0;
             Stock value;
@@ -102,42 +102,115 @@ namespace Ticker501
                 Console.WriteLine("Invalid ticker option.");
             }
 
-            return cost; 
-            
-            /*
-            // ********* Check to see if stock is already in portfolio
-            foreach (Stock s in _stocks)
+            if(cost > 0)
             {
-                if(s.GetTickerName == tickername.ToUpper())
-                {
-                    // add stock to portfolio
-                    throw new NotImplementedException();
-                }
+                Console.WriteLine("Successfully purchased " + tickername.ToUpper() + " stock.");
             }
-            
-            throw new NotImplementedException();
-            */
+            return cost; 
         }
         
-        public double SellStock(string tickername)
+        public double SellStock()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Select which stock to sell: ");
+            foreach(Stock s in _stocks.Values)
+            {
+                Console.WriteLine(s.GetTickerName + "-" + s.GetName + "-" + s.GetQuantity + " @ $" + s.GetPrice);
+            }
+            Console.Write("Selection (enter tickername): ");
+            string input = Console.ReadLine().ToUpper();
+            Stock value;
+            while(!(_stocks.TryGetValue(input, out value)))
+            {
+                Console.WriteLine("Invalid option try again.");
+                Console.WriteLine("Choose a stock to sell: ");
+                Console.Write("Selection (enter tickername): ");
+                input = Console.ReadLine().ToUpper();
+            }
+
+            string name = value.GetName;
+            string tn = value.GetTickerName;
+            double price = value.GetPrice;
+            int quantity = value.GetQuantity;
+            double purchaseprice = value.GetPurchaseValue;
+
+            Console.WriteLine("Selling: " + tn + " @ $" + price.ToString("n2") + " / share");
+            Console.WriteLine("How many of your " + quantity + " stocks do you want to sell?");
+            Console.Write("Amount: ");
+            int sell = Convert.ToInt32(Console.ReadLine());
+            while(sell > quantity)
+            {
+                Console.WriteLine("You do not own that many stocks");
+                Console.WriteLine("How many of your " + quantity + " stocks do you want to sell?");
+                Console.Write("Amount: ");
+                sell = Convert.ToInt32(Console.ReadLine());
+            }
+            double amount = sell * price;
+            _stocks.Remove(input.ToUpper());
+            int newquanity = quantity - sell;
+            if(newquanity > 0)
+            {
+                Stock updatestk = new Stock(tn, name, purchaseprice, price, newquanity);
+                _stocks.Add(input, updatestk);
+            }
+
+            return amount; 
         }
 
-        public double PositionsBalance()
+        public double InitialValue()
         {
-            throw new NotImplementedException();
             double total = 0;
-            foreach(Stock s in _stocks.Values)
+            foreach (Stock s in _stocks.Values)
+            {
+                int q = s.GetQuantity;
+                double p = s.GetPurchaseValue;
+                total += (p * q);
+            }
+            return total;
+        }
+
+        public double CurrentValue()
+        {
+            double total = 0;
+            foreach (Stock s in _stocks.Values)
             {
                 int q = s.GetQuantity;
                 double p = s.GetPrice;
                 total += (p * q);
             }
-            foreach(Stock x in _stocks.Values)
+            return total;
+        }
+
+        public int Quantity()
+        {
+            int total = 0;
+            foreach (Stock s in _stocks.Values)
             {
-                Console.WriteLine("\t" + x.GetTickerName + " = ");
+                int q = s.GetQuantity;
+                total += q;
             }
+            return total;
+        }
+
+        public void PositionsBalance()
+        {
+            double total = CurrentValue();
+            int quantity = Quantity();
+            Console.WriteLine("Current value of all stocks in portfolio " + _name + " : $" + total.ToString("n2"));
+            Console.WriteLine("Breakdown by stock:");
+            foreach (Stock s in _stocks.Values)
+            {
+                double t = s.GetQuantity * s.GetPrice;
+                double percent = ((double)s.GetQuantity / (double)quantity)*100;
+                Console.WriteLine("\t" + s.GetTickerName + " - " + s.GetName + "(" + percent.ToString("n2") + "%)" + " = $" + t.ToString("n2"));
+            }
+        }
+
+        public void PortfolioBalance(double accttotal)
+        {
+            double invest = InitialValue();
+            double percent = ((double)Quantity() / accttotal) * 100;
+            Console.WriteLine("Total Investment: $" + invest.ToString("n2"));
+            Console.WriteLine("Percentage of Account: " + percent + "%");
         }
     }
 }

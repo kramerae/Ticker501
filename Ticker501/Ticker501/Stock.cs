@@ -15,12 +15,13 @@ namespace Ticker501
         private int _quantity; // quantity to be purchased
         private double _purchasevalue; // purchase price
 
-        // Stock isntance for reading in stock files
-        public Stock(string tickername, string fullname, double purchasevalue)
+        // Stock instance for reading in stock files
+        public Stock(string tickername, string fullname, double purchasevalue, double price)
         {
             _tickerName = tickername;
             _name = fullname;
             _purchasevalue = purchasevalue;
+            _price = price;
         }
 
         // Stock instance for when buying stock
@@ -77,7 +78,12 @@ namespace Ticker501
         
         public void DisplayStock()
         {
-            Console.WriteLine(_tickerName + "-" + _name + "-$" + _purchasevalue);    
+            Console.WriteLine(_tickerName + "-" + _name + "-$" + _price.ToString("n2"));    
+        }
+
+        public void UpdateStock(double price)
+        {
+            _price = price; 
         }
         /*
         public double Add(int count)

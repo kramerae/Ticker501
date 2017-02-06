@@ -11,7 +11,7 @@ namespace Ticker501
 {
     public class Simulator
     {
-        public void StartSimulator()
+        public static void StartSimulator()
         {
             Console.WriteLine("Enter Market Volatility:");
             Console.WriteLine("(1) High-Volatility (3%-15% change)");
@@ -30,8 +30,86 @@ namespace Ticker501
                 Console.Write("Selection: ");
                 selection = Convert.ToInt32(Console.ReadLine());
             }
-            Database.UpdatePrices(selection);
+            UpdatePrices(selection);
         }
-        
+
+
+
+        public static void UpdatePrices(int selection)
+        {
+            Random rnd = new Random();
+            int randomnumber;
+            int r;
+
+
+            if (selection == 1)
+            {
+                randomnumber = rnd.Next(3, 16);
+                r = rnd.Next(1, 3);
+                SimulateForeach(randomnumber, r);
+
+            }
+            else if (selection == 2)
+            {
+                randomnumber = rnd.Next(2, 9);
+                r = rnd.Next(1, 3);
+                SimulateForeach(randomnumber, r);
+
+            }
+            else if (selection == 3)
+            {
+                randomnumber = rnd.Next(1, 5);
+                r = rnd.Next(1, 3);
+                SimulateForeach(randomnumber, r);
+            }  
+
+        }
+
+        public static void SimulateForeach(int randomnumber, int r)
+        {
+            int sign;
+            double price;
+            double change;
+            double multiplier;
+
+            multiplier = ((double)randomnumber / (double)100);
+            if (r == 1)
+            {
+                sign = 1;
+            }
+            else
+            {
+                sign = -1;
+            }
+            foreach (Stock s in Database._stockdatabase.Values)
+            {
+                price = s.GetPurchaseValue;
+                change = price * multiplier;
+                if (sign == 1)
+                {
+                    s.UpdateStock(price + change);
+                }
+                else if (sign == -1)
+                {
+                    s.UpdateStock(price - change);
+                }
+            }
+            foreach (Portfolio p in Program._account.GetPortfolio.Values)
+            {
+                foreach (Stock s in p.GetStocks.Values)
+                {
+                    price = s.GetPurchaseValue;
+                    change = price * multiplier;
+                    if (sign == 1)
+                    {
+                        s.UpdateStock(price + change);
+                    }
+                    else if (sign == -1)
+                    {
+                        s.UpdateStock(price - change);
+                    }
+                }
+            }
+        }
     }
 }

@@ -45,7 +45,7 @@ namespace Ticker501
             Database.DisplayTicker();
 
             // Get ticker name
-            Console.WriteLine("Enter ticker name for stock you wish to buy: ");
+            Console.Write("Enter ticker name for stock you wish to buy: ");
             string tickername = Console.ReadLine().ToUpper();
 
             double cost = 0;
@@ -55,7 +55,8 @@ namespace Ticker501
                 Console.WriteLine("Purchasing: " + value.GetTickerName + "-" + value.GetName + "-" + value.GetPurchaseValue);
 
                 int style = 0; // 1 = enter # of stocks; 2 = enter amount in $$
-                Console.WriteLine("\t(1) to buy by entering number of stocks\n\t(2) to buy by amount in dollars");
+                Console.WriteLine("(1) to buy by entering number of stocks\n(2) to buy by amount in dollars");
+                Console.Write("Selection: ");
                 style = Convert.ToInt32(Console.ReadLine());
                 
                 int quantity = 0;
@@ -211,6 +212,18 @@ namespace Ticker501
             double percent = ((double)Quantity() / accttotal) * 100;
             Console.WriteLine("Total Investment: $" + invest.ToString("n2"));
             Console.WriteLine("Percentage of Account: " + percent + "%");
+        }
+
+        public void Report()
+        {
+            double currenttotal = CurrentValue();
+            double initialtotal = InitialValue();
+            double change = initialtotal - currenttotal;
+            double percent = (change / initialtotal) * 100;
+            Console.WriteLine("Value of all stocks at purchase = $" + initialtotal.ToString("n2"));
+            Console.WriteLine("Value of stocks at current time = $" + currenttotal.ToString("n2"));
+            Console.WriteLine("Gain/Loss in dollars: " + change.ToString("+0.00;-0.00"));
+            Console.WriteLine("Percent change: " + percent.ToString("+0.00;-0.00") + "%");
         }
     }
 }

@@ -152,7 +152,7 @@ namespace Ticker501
                 case ('r'):
                     {
                         Console.WriteLine("\nGet gains/loss report:");
-                        throw new NotImplementedException();
+                        _account.Report();
                         return 1;
                     }
                 // Buy Stock
@@ -207,8 +207,8 @@ namespace Ticker501
                 case ('u'):
                     {
                         Console.WriteLine("\nLauching simulator:");
-                        Database.StartSimulator();
-                        //throw new NotImplementedException();
+                        Simulator.StartSimulator();
+                        Console.WriteLine("Successfully updated stock prices.");
                         return 1;
                     }
                 case ('E'):
@@ -250,7 +250,7 @@ namespace Ticker501
                 case ('r'):
                     {
                         Console.WriteLine("\nGet gains/loss report:");
-                        throw new NotImplementedException();
+                        p.Report();
                         return 2;
                     }
                 // Buy Stock
@@ -267,7 +267,6 @@ namespace Ticker501
                     {
                         Console.WriteLine("\nSell stock:");
                         p.SellStock();
-                        //throw new NotImplementedException();
                         return 2;
                     }
                 // Return to account menu 

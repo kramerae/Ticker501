@@ -52,7 +52,7 @@ namespace Ticker501
             double cost = 0; 
             if(_portfolioCount == 0)
             {
-                Console.Write("You have no portfolios.\nDo you want to create a portfolio? (y/n)");
+                Console.Write("You have no portfolios.\nDo you want to create a portfolio? (y/n) ");
                 string option = Console.ReadLine();
                 if (option[0] == 'y')
                 {
@@ -104,6 +104,7 @@ namespace Ticker501
             {
                 Console.WriteLine(p);
             }
+            Console.Write("Selection: ");
             string input = Console.ReadLine();
             Portfolio value;
             while(!(_portfolios.TryGetValue(input, out value)))
@@ -229,7 +230,24 @@ namespace Ticker501
 
         }
 
-       
+        public void Report()
+        {
+            double initialtotal = 0;
+            foreach(Portfolio p in _portfolios.Values)
+            {
+                foreach (Stock s in p.GetStocks.Values)
+                {
+                    initialtotal += s.GetQuantity * s.GetPurchaseValue;
+                }
+            }
+            double currenttotal = CurrentValue();
+            double change = initialtotal - currenttotal;
+            double percent = (change / initialtotal) * 100;
+            Console.WriteLine("Value of all stocks at purchase = $" + initialtotal.ToString("n2"));
+            Console.WriteLine("Value of stocks at current time = $" + currenttotal.ToString("n2"));
+            Console.WriteLine("Gain/Loss in dollars: " + change.ToString("+0.00;-0.00"));
+            Console.WriteLine("Percent change: " + percent.ToString("+0.00;-0.00") + "%");
+        }
 
     }
 }

@@ -77,14 +77,21 @@ namespace Ticker501
                 Console.Write("You have no portfolios.\nDo you want to create a portfolio? (y/n) ");
                 string option = Console.ReadLine();
                 // Yes > allows them to continue with buying stock
-                if (option[0] == 'y')
+                if (option[0] == 'y' || option[0] == 'Y')
                 {
                     // Call Create portfolio 
                     CreatePortfolio();
                 }
                 // No > return to account menu 
+                else if(option[0] == 'n' || option[0] == 'N')
+                {
+                    Console.WriteLine("Cannot buy stock without a portfolio. Returning to main menu");
+                    return;
+                }
+                // check for invalid input
                 else
                 {
+                    Console.WriteLine("Error. Invalid option. Returning to main menu.");
                    return;
                 }
             }
@@ -109,7 +116,7 @@ namespace Ticker501
             // if there are no portfolios, there is no stock to sell
             if (_portfolioCount == 0)
             {
-                Console.Write("You have no stock to sell.");
+                Console.WriteLine("You have no stock to sell.");
                 return;
             }
             
@@ -241,11 +248,18 @@ namespace Ticker501
             // checks to see if the account has less than 3 portfolios in it
             if (_portfolioCount < 3)
             {
-                // increment portfolio count
-                _portfolioCount++;
+                
                 // Get portfolio name from user
                 Console.Write("Enter portfolio name: ");
                 string name = Console.ReadLine();
+                // Check to see if portfolio has already been created
+                if (_portfolios.ContainsKey(name))
+                {
+                    Console.WriteLine("Error. Portfolio name already exists. Returning to main menu.");
+                    return;    
+                }
+                // increment portfolio count
+                _portfolioCount++;
                 // Create new portfolio & add it to the dictionary
                 Portfolio newptf = new Portfolio(name);
                 _portfolios.Add(name, newptf);
@@ -272,6 +286,7 @@ namespace Ticker501
                 {
                     Console.WriteLine(x);
                 }
+                Console.Write("Selection: ");
                 string input = Console.ReadLine();
                 Portfolio value;
                 while (!(_portfolios.TryGetValue(input, out value)))

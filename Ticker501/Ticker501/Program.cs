@@ -62,30 +62,40 @@ namespace Ticker501
         /// <returns>menu level (0/1/2)</returns>
         private static int AccountMenu()
         {
-            int menu = 1; 
-            while(menu == 1)
+            try
             {
-                Console.WriteLine("\nAccount Menu");
-                Console.WriteLine("Please select an option:");
-                Console.WriteLine("(D) Deposit funds to account");
-                Console.WriteLine("(W) Withdrawal funds from account");
-                Console.WriteLine("(A) Account Balance");
-                Console.WriteLine("(C) Cash Balance");
-                Console.WriteLine("(P) Positions Balance");
-                Console.WriteLine("(R) Gains/Loss Report");
-                Console.WriteLine("(N) Create new portfolio");
-                Console.WriteLine("(X) Delete portfolio");
-                Console.WriteLine("(B) Buy stock");
-                Console.WriteLine("(S) Sell stock");
-                Console.WriteLine("(M) View portfolio menu");
-                Console.WriteLine("(U) Update stock prices using simulator");
-                Console.WriteLine("(E) Exit");
-                string s = Console.ReadLine();
-                // Calls switch based on option input
-                menu = AccountSwitch(s[0]);
-            }
+                int menu = 1;
+                while (menu == 1)
+                {
+                    Console.WriteLine("\nAccount Menu");
+                    Console.WriteLine("Please select an option:");
+                    Console.WriteLine("(D) Deposit funds to account");
+                    Console.WriteLine("(W) Withdrawal funds from account");
+                    Console.WriteLine("(A) Account Balance");
+                    Console.WriteLine("(C) Cash Balance");
+                    Console.WriteLine("(P) Positions Balance");
+                    Console.WriteLine("(R) Gains/Loss Report");
+                    Console.WriteLine("(N) Create new portfolio");
+                    Console.WriteLine("(X) Delete portfolio");
+                    Console.WriteLine("(B) Buy stock");
+                    Console.WriteLine("(S) Sell stock");
+                    Console.WriteLine("(M) View portfolio menu");
+                    Console.WriteLine("(U) Update stock prices using simulator");
+                    Console.WriteLine("(E) Exit");
+                    Console.Write("Selection: ");
+                    string s = Console.ReadLine();
+                    // Calls switch based on option input
+                    menu = AccountSwitch(s[0]);
+                }
 
-            return menu;
+                return menu;
+            }
+            catch
+            {
+                Console.WriteLine("Error. Returning to main menu");
+                return 1; 
+            }
+            
         }
 
         /// <summary>
@@ -94,25 +104,35 @@ namespace Ticker501
         /// <returns>menu level (0/1/2)</returns>
         private static int PortfolioMenu()
         {
-            int menu = 2;
-            // Gets portfolio object
-            Portfolio p = _account.SelectPortfolio();
-            while(menu == 2)
+            try
             {
-                Console.WriteLine("\nPortfolio Menu for portfolio " + p.GetName);
-                Console.WriteLine("Please select an option:");
-                Console.WriteLine("(A) Portfolio Balance");
-                Console.WriteLine("(P) Positions Balance");
-                Console.WriteLine("(B) Buy Stock");
-                Console.WriteLine("(S) Sell Stock");
-                Console.WriteLine("(R) Gains/Loss Report");
-                Console.WriteLine("(M) Return to Account Menu");
-                string s = Console.ReadLine();
-                // Calls portfolio switch based on option input
-                menu = PortfolioSwitch(s[0], p);
-            }
+                int menu = 2;
+                // Gets portfolio object
+                Portfolio p = _account.SelectPortfolio();
+                while (menu == 2)
+                {
+                    Console.WriteLine("\nPortfolio Menu for portfolio " + p.GetName);
+                    Console.WriteLine("Please select an option:");
+                    Console.WriteLine("(A) Portfolio Balance");
+                    Console.WriteLine("(P) Positions Balance");
+                    Console.WriteLine("(B) Buy Stock");
+                    Console.WriteLine("(S) Sell Stock");
+                    Console.WriteLine("(R) Gains/Loss Report");
+                    Console.WriteLine("(M) Return to Account Menu");
+                    Console.Write("Selection: ");
+                    string s = Console.ReadLine();
+                    // Calls portfolio switch based on option input
+                    menu = PortfolioSwitch(s[0], p);
+                }
 
-            return menu;
+                return menu;
+            }
+            catch
+            {
+                Console.WriteLine("Error. Returning to main menu");
+                return 1;
+            }
+            
         }
         
         /// <summary>
@@ -130,23 +150,39 @@ namespace Ticker501
                 case ('D'):
                 case ('d'):
                     {
-                        Console.WriteLine("\nDeposit funds to account:");
-                        Console.Write("Enter deposit amount: ");
-                        double d = Convert.ToDouble(Console.ReadLine());
-                        double funds = _account.DepositFunds(d);
-                        Console.WriteLine("Account Fund Balance = $" + funds.ToString("n2"));
-                        return 1;
+                        try
+                        {
+                            Console.WriteLine("\nDeposit funds to account:");
+                            Console.Write("Enter deposit amount: ");
+                            double d = Convert.ToDouble(Console.ReadLine());
+                            double funds = _account.DepositFunds(d);
+                            Console.WriteLine("Account Fund Balance = $" + funds.ToString("n2"));
+                            return 1;
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Error. Invalid input. Returning to main menu.");
+                            return 1; 
+                        }
                     }
                 // Withdrawal funds from account
                 case ('W'):
                 case ('w'):
                     {
-                        Console.WriteLine("\nWithdrawal funds from account:");
-                        Console.Write("Enter withdrawal amount: ");
-                        double w = Convert.ToDouble(Console.ReadLine());
-                        double funds = _account.WithdrawalFunds(w);
-                        Console.WriteLine("Account Fund Balance = $" + funds.ToString("n2"));
-                        return 1;
+                        try
+                        {
+                            Console.WriteLine("\nWithdrawal funds from account:");
+                            Console.Write("Enter withdrawal amount: ");
+                            double w = Convert.ToDouble(Console.ReadLine());
+                            double funds = _account.WithdrawalFunds(w);
+                            Console.WriteLine("Account Fund Balance = $" + funds.ToString("n2"));
+                            return 1;
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Error. Invalid input. Returning to main menu.");
+                            return 1;
+                        }
                     }
                 // Get account balance
                 case ('A'):
@@ -224,7 +260,8 @@ namespace Ticker501
                         // check to see if they have a portfolio to view its menu
                         if(_account.GetPortfolioCount == 0)
                         {
-                            Console.WriteLine("You do not have any portfolios to view.");
+                            Console.WriteLine("\nYou do not have any portfolios to view.");
+                            Console.WriteLine("Returning to main menu.");
                             return 1;
                         }
                         else
@@ -238,7 +275,6 @@ namespace Ticker501
                     {
                         Console.WriteLine("\nLauching simulator:");
                         Simulator.StartSimulator();
-                        Console.WriteLine("Successfully updated stock prices.");
                         return 1;
                     }
                 // Exit

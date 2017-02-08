@@ -19,24 +19,33 @@ namespace Ticker501
         /// </summary>
         public static void StartSimulator()
         {
-            Console.WriteLine("Enter Market Volatility:");
-            Console.WriteLine("(1) High-Volatility (3%-15% change)");
-            Console.WriteLine("(2) Medium-Volatility (2%-8% change)");
-            Console.WriteLine("(3) Low-Volatility (1%-4% change)");
-            Console.Write("Selection: ");
-            int selection = Convert.ToInt32(Console.ReadLine());
-
-            while (selection < 1 || selection > 3)
+            try
             {
-                Console.WriteLine("Invalid option");
                 Console.WriteLine("Enter Market Volatility:");
                 Console.WriteLine("(1) High-Volatility (3%-15% change)");
                 Console.WriteLine("(2) Medium-Volatility (2%-8% change)");
                 Console.WriteLine("(3) Low-Volatility (1%-4% change)");
                 Console.Write("Selection: ");
-                selection = Convert.ToInt32(Console.ReadLine());
+                int selection = Convert.ToInt32(Console.ReadLine());
+
+                while (selection < 1 || selection > 3)
+                {
+                    Console.WriteLine("Invalid option");
+                    Console.WriteLine("Enter Market Volatility:");
+                    Console.WriteLine("(1) High-Volatility (3%-15% change)");
+                    Console.WriteLine("(2) Medium-Volatility (2%-8% change)");
+                    Console.WriteLine("(3) Low-Volatility (1%-4% change)");
+                    Console.Write("Selection: ");
+                    selection = Convert.ToInt32(Console.ReadLine());
+                }
+                UpdatePrices(selection);
+                Console.WriteLine("Successfully updated stock prices.");
             }
-            UpdatePrices(selection);
+            catch
+            {
+                Console.WriteLine("\nError. Invalid input. Returning to main menu.");
+                return;
+            }
         }
 
         /// <summary>

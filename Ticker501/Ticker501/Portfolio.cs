@@ -60,90 +60,109 @@ namespace Ticker501
         /// <returns>cost of buying stocks</returns>
         public double BuyStock(double funds)
         {
-            // Display current stock values
-            Database.DisplayTicker();
-
-            // Get ticker name
-            Console.Write("Enter ticker name for stock you wish to buy: ");
-            string tickername = Console.ReadLine().ToUpper();
-
-            double cost = 0;
-            Stock value;
-            // Check to see if stock is valid
-            if(Database._stockdatabase.TryGetValue(tickername, out value))
+            try
             {
-                Console.WriteLine("Purchasing: " + value.GetTickerName + "-" + value.GetName + "-" + value.GetPurchaseValue);
+                // Display current stock values
+                Database.DisplayTicker();
 
-                int style = 0; // 1 = enter # of stocks; 2 = enter amount in $$
-                Console.WriteLine("(1) to buy by entering number of stocks\n(2) to buy by amount in dollars");
-                Console.Write("Selection: ");
-                style = Convert.ToInt32(Console.ReadLine());
-                
-                int quantity = 0;
-                // buy by entering number of stocks
-                if(style == 1)
+                // Get ticker name
+                Console.Write("Enter ticker name for stock you wish to buy: ");
+                string tickername = Console.ReadLine().ToUpper();
+
+                if (_stocks.ContainsKey(tickername))
                 {
-                    // Get the quantity of stocks to buy
-                    Console.Write("Enter the number of " + value.GetTickerName + " stocks you want to buy: ");
-                    quantity = Convert.ToInt32(Console.ReadLine());
-                    // Calculate cost by getting current value and multiple by number buying
-                    cost = value.GetPurchaseValue * quantity;
-                    // Add trade fee
-                    cost += FFPTrade;
-                    // Check to see if the account has enough funds to buy the stock
-                    if (cost > funds)
+                    Console.WriteLine("Error. You've already purchased this stock, cannot purchase again.");
+                    Console.WriteLine("Returning to main menu.");
+                    return 0;
+                }
+                double cost = 0;
+                Stock value;
+                // Check to see if stock is valid
+                if (Database._stockdatabase.TryGetValue(tickername, out value))
+                {
+                    Console.WriteLine("Purchasing: " + value.GetTickerName + "-" + value.GetName + "-" + value.GetPurchaseValue);
+
+                    int style = 0; // 1 = enter # of stocks; 2 = enter amount in $$
+                    Console.WriteLine("(1) to buy by entering number of stocks\n(2) to buy by amount in dollars");
+                    Console.Write("Selection: ");
+                    style = Convert.ToInt32(Console.ReadLine());
+
+                    int quantity = 0;
+                    // buy by entering number of stocks
+                    if (style == 1)
                     {
-                        // not enough funds return to menu
-                        Console.WriteLine("You don't have that much money!");
-                        Console.WriteLine("Exiting buy stock...");
+                        // Get the quantity of stocks to buy
+                        Console.Write("Enter the number of " + value.GetTickerName + " stocks you want to buy: ");
+                        quantity = Convert.ToInt32(Console.ReadLine());
+                        // Calculate cost by getting current value and multiple by number buying
+                        cost = value.GetPurchaseValue * quantity;
+                        // Add trade fee
+                        cost += FFPTrade;
+                        // Check to see if the account has enough funds to buy the stock
+                        if (cost > funds)
+                        {
+                            // not enough funds return to menu
+                            Console.WriteLine("You don't have that much money!");
+                            Console.WriteLine("Exiting buy stock...");
+                            return 0;
+                        }
+
+                        // Have enough money
+                        // Create new stock object & add to dictionary
+                        Stock nwstk = new Stock(value.GetTickerName, value.GetName, value.GetPurchaseValue, value.GetPurchaseValue, quantity);
+                        _stocks.Add(value.GetTickerName, nwstk);
+
+                    }
+                    // buy by entering amount
+                    else if (style == 2)
+                    {
+                        // Get the amount they want to spend on buying stocks
+                        Console.Write("Enter the amount in dollars of " + value.GetTickerName + " stock you want to buy: ");
+                        double amount = Convert.ToInt32(Console.ReadLine());
+                        // Calculate the quantity to buy based on current cost / stock
+                        quantity = Convert.ToInt32(amount / value.GetPurchaseValue);
+                        // Calculate cost of buying stock & add fee for buying stock
+                        cost = value.GetPurchaseValue * quantity;
+                        cost += FFPTrade;
+                        // check to see if enough money in account to make purchase
+                        if (cost > funds)
+                        {
+                            // not enough funds return to menu
+                            Console.WriteLine("You don't have that much money!");
+                            Console.WriteLine("Exiting buy stock...");
+                            return 0;
+                        }
+
+                        // Have enough money
+                        // Create new stock object & add to dictionary
+                        Stock nwstk = new Stock(value.GetTickerName, value.GetName, value.GetPurchaseValue, value.GetPurchaseValue, quantity);
+                        _stocks.Add(value.GetTickerName, nwstk);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error. Invalid input. Returning to main menu.");
                         return 0;
                     }
-
-                    // Have enough money
-                    // Create new stock object & add to dictionary
-                    Stock nwstk = new Stock(value.GetTickerName, value.GetName, value.GetPurchaseValue, value.GetPurchaseValue, quantity);
-                    _stocks.Add(value.GetTickerName, nwstk);
-
                 }
-                // buy by entering amount
-                else if(style == 2)
+                // Did not select a valid ticker to buy
+                else
                 {
-                    // Get the amount they want to spend on buying stocks
-                    Console.Write("Enter the amount in dollars of " + value.GetTickerName + " stock you want to buy: ");
-                    double amount = Convert.ToInt32(Console.ReadLine());
-                    // Calculate the quantity to buy based on current cost / stock
-                    quantity = Convert.ToInt32(amount / value.GetPurchaseValue);
-                    // Calculate cost of buying stock & add fee for buying stock
-                    cost = value.GetPurchaseValue * quantity;
-                    cost += FFPTrade;
-                    // check to see if enough money in account to make purchase
-                    if (cost > funds)
-                    {
-                        // not enough funds return to menu
-                        Console.WriteLine("You don't have that much money!");
-                        Console.WriteLine("Exiting buy stock...");
-                        return 0;
-                    }
-
-                    // Have enough money
-                    // Create new stock object & add to dictionary
-                    Stock nwstk = new Stock(value.GetTickerName, value.GetName, value.GetPurchaseValue, value.GetPurchaseValue, quantity);
-                    _stocks.Add(value.GetTickerName, nwstk);
-
+                    Console.WriteLine("Invalid ticker option.");
                 }
+                // Check to validate if stock was purchased
+                if (cost > 0)
+                {
+                    Console.WriteLine("Successfully purchased " + tickername.ToUpper() + " stock.");
+                }
+                // return cost of purchase
+                return cost;
             }
-            // Did not select a valid ticker to buy
-            else
+            catch
             {
-                Console.WriteLine("Invalid ticker option.");
+                Console.WriteLine("Error. Invalid input. Returning to main menu.");
+                return 0;
             }
-            // Check to validate if stock was purchased
-            if(cost > 0)
-            {
-                Console.WriteLine("Successfully purchased " + tickername.ToUpper() + " stock.");
-            }
-            // return cost of purchase
-            return cost; 
+            
         }
         
         /// <summary>
@@ -152,61 +171,76 @@ namespace Ticker501
         /// <returns>total money from selling stocks</returns>
         public double SellStock()
         {
-            // Display all stocks in portfolio & get which one user wants to sell
-            Console.WriteLine("Select which stock to sell: ");
-            foreach(Stock s in _stocks.Values)
+            try
             {
-                Console.WriteLine(s.GetTickerName + "-" + s.GetName + "-" + s.GetQuantity + " @ $" + s.GetPrice);
-            }
-            Console.Write("Selection (enter tickername): ");
-            string input = Console.ReadLine().ToUpper();
-            Stock value;
-            // Validate if stock entered is in portfolio
-            while(!(_stocks.TryGetValue(input, out value)))
-            {
-                Console.WriteLine("Invalid option try again.");
-                Console.WriteLine("Choose a stock to sell: ");
+                // Display all stocks in portfolio & get which one user wants to sell
+                Console.WriteLine("Select which stock to sell: ");
+                foreach (Stock s in _stocks.Values)
+                {
+                    Console.WriteLine(s.GetTickerName + "-" + s.GetName + "-" + s.GetQuantity + " @ $" + s.GetPrice);
+                }
                 Console.Write("Selection (enter tickername): ");
-                input = Console.ReadLine().ToUpper();
-            }
+                string input = Console.ReadLine().ToUpper();
+                Stock value;
+                // Validate if stock entered is in portfolio
+                while (!(_stocks.TryGetValue(input, out value)))
+                {
+                    Console.WriteLine("Invalid option try again.");
+                    Console.WriteLine("Choose a stock to sell: ");
+                    Console.Write("Selection (enter tickername): ");
+                    input = Console.ReadLine().ToUpper();
+                }
 
-            // Get all the values of selected stock & store locally
-            string name = value.GetName;
-            string tn = value.GetTickerName;
-            double price = value.GetPrice;
-            int quantity = value.GetQuantity;
-            double purchaseprice = value.GetPurchaseValue;
+                // Get all the values of selected stock & store locally
+                string name = value.GetName;
+                string tn = value.GetTickerName;
+                double price = value.GetPrice;
+                int quantity = value.GetQuantity;
+                double purchaseprice = value.GetPurchaseValue;
 
-            // Display current value of selected stock and quantity in portfolio
-            Console.WriteLine("Selling: " + tn + " @ $" + price.ToString("n2") + " / share");
-            // Get the number of stocks user wants to sell
-            Console.WriteLine("How many of your " + quantity + " stocks do you want to sell?");
-            Console.Write("Amount: ");
-            int sell = Convert.ToInt32(Console.ReadLine());
-            // Check to see user has that many stocks to sell
-            // Loop until given a valid quantity to sell
-            while(sell > quantity)
-            { 
-                Console.WriteLine("You do not own that many stocks");
+                // Display current value of selected stock and quantity in portfolio
+                Console.WriteLine("Selling: " + tn + " @ $" + price.ToString("n2") + " / share");
+                // Get the number of stocks user wants to sell
                 Console.WriteLine("How many of your " + quantity + " stocks do you want to sell?");
                 Console.Write("Amount: ");
-                sell = Convert.ToInt32(Console.ReadLine());
-            }
-            // Get the amount for selling the stocks & remove stock
-            double amount = sell * price;
-            amount -= FFPTrade;
-            _stocks.Remove(input.ToUpper());
-            // Calculate new quantity for stock in portfolio after selling
-            int newquanity = quantity - sell;
-            // If stocks are remaing, add stock to portfolio based on new quantity remaining
-            if(newquanity > 0)
-            {
-                Stock updatestk = new Stock(tn, name, purchaseprice, price, newquanity);
-                _stocks.Add(input, updatestk);
-            }
+                int sell = Convert.ToInt32(Console.ReadLine());
+                // Check to see user has that many stocks to sell
+                // Loop until given a valid quantity to sell
+                while (sell > quantity)
+                {
+                    Console.WriteLine("You do not own that many stocks");
+                    Console.WriteLine("How many of your " + quantity + " stocks do you want to sell?");
+                    Console.Write("Amount: ");
+                    sell = Convert.ToInt32(Console.ReadLine());
+                }
+                // Get the amount for selling the stocks & remove stock
+                double amount = sell * price;
+                amount -= FFPTrade;
+                _stocks.Remove(input.ToUpper());
+                if(_stocks.Count == 0)
+                {
+                    Console.WriteLine("You do not have any stocks remaining in the portfolio.");
+                    Console.WriteLine("Delete portfolio or add stock to the portfolio");
+                    
+                }
+                // Calculate new quantity for stock in portfolio after selling
+                int newquanity = quantity - sell;
+                // If stocks are remaing, add stock to portfolio based on new quantity remaining
+                if (newquanity > 0)
+                {
+                    Stock updatestk = new Stock(tn, name, purchaseprice, price, newquanity);
+                    _stocks.Add(input, updatestk);
+                }
 
-            // Return amount of cash received for selling stock 
-            return amount; 
+                // Return amount of cash received for selling stock 
+                return amount;
+            }
+            catch
+            {
+                Console.WriteLine("Error. Invalid input. Returning to main menu.");
+                return 0;
+            }
+            
         }
 
         /// <summary>
@@ -294,9 +328,9 @@ namespace Ticker501
             double invest = InitialValue();
             double percent = ((double)Quantity() / accttotal) * 100;
             // Displays the amount spend to purchase all stock in account
-            Console.WriteLine("Total Investment: $" + invest.ToString("n2"));
+            Console.WriteLine("Total Investment in Portfolio: $" + invest.ToString("n2"));
             // Displays the percent the stocks in the portfolio are of the entire number of stocks in account
-            Console.WriteLine("Percentage of Account: " + percent + "%");
+            Console.WriteLine("Portfolio Percentage of Account: " + percent + "%");
         }
 
         /// <summary>
